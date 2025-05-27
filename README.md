@@ -6,7 +6,7 @@
 
 ### Jira Integration
 - Process and analyze Jira issues.
-- Visual dashboards with key delivery metrics(only supports issues):
+- Visual dashboards with key delivery metrics:
   - **Cycle Time**
   - **Lead Time**
   - **Work in Progress (WIP)**
