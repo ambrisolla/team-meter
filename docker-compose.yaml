@@ -1,0 +1,41 @@
+services:
+  app:
+    container_name: team_meter_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - APP_NAME=${APP_NAME}
+      - APP_VERSION=${APP_VERSION}
+      - JIRA_URL=${JIRA_URL}
+      - JIRA_PASS=${JIRA_PASS}
+      - JIRA_USER=${JIRA_USER}
+      - JIRA_SYNC_INTERVAL=${JIRA_SYNC_INTERVAL}
+      - JIRA_SYNC_START_DATE=${JIRA_SYNC_START_DATE}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_HOST=team_meter_db
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASS=${DATABASE_PASS}
+      - DATABASE_PORT=${DATABASE_PORT}
+    depends_on:
+      - database
+    restart: always
+  database:
+    container_name: team_meter_db
+    image: postgres:17.5
+    environment:
+      - POSTGRES_DB=${DATABASE_NAME}
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASS}
+    ports:
+      - 5432:5432
+    restart: always
+  grafana:
+    container_name: team_meter_grafana
+    image: grafana/grafana
+    volumes:
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    ports:
+      - 3000:3000
+    restart: always
