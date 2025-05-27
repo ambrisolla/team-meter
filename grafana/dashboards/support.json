@@ -178,7 +178,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "select\n  count(*)\nfrom\n  issues\nwhere\n  status != 'Done'\n  and issue_type = '$issue_type'\n  AND $__timeFilter(created_at)\n  AND assignee_email IN ($assignee)\n  and project_key = '$project';",
+          "rawSql": "select\n  count(*)\nfrom\n  issues\nwhere\n  status != 'Done'\n  and issue_type = '$issue_type'\n  AND $__timeFilter(created_at)\n  and project_key = '$project';",
           "refId": "A",
           "sql": {
             "columns": [
@@ -350,7 +350,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "select\n  count(*)\nfrom\n  issues\nwhere\n  status = 'In Progress'\n  and issue_type = '$issue_type'\n  AND assignee_email IN ($assignee)\n  AND $__timeFilter(created_at)\n  and project_key = '$project';",
+          "rawSql": "select\n  count(*)\nfrom\n  issues\nwhere\n  status = 'In Progress'\n  and issue_type = '$issue_type'\n  AND $__timeFilter(created_at)\n  and project_key = '$project';",
           "refId": "A",
           "sql": {
             "columns": [
