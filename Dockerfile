@@ -8,7 +8,7 @@ RUN go mod download
 
 COPY . .
 
-RUN GOOS=linux GOARCH=amd64 go build -o app cmd/jira-issues/main.go
+RUN GOOS=linux GOARCH=amd64 go build -o app cmd/app/main.go
 
 FROM debian:latest
 

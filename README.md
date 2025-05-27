@@ -23,11 +23,17 @@
 ```bash
   $ cp .env.example .env
 ```
-3. Start the stack
+3. Add projects to project list editing ```config/jira_projects.txt``` file.
+```
+ABCDE
+XYZ
+```
+
+4. Start the stack
 ```bash
   $ make up
 ```
-4. Stop the stack and remove Docker resources
+1. Stop the stack and remove Docker resources
 ```bash
   $ make down
 ```
