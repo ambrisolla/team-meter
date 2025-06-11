@@ -13,7 +13,7 @@ func Run(c *config.Config, l *zap.Logger) {
 	service := jiraService.New(c, l)
 
 	for {
-		service.SyncIssues(c.Jira.Projects)
+		service.SyncIssues(c.Jira)
 		time.Sleep(c.Jira.SyncInterval)
 	}
 }

@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/joho/godotenv"
+	"gopkg.in/yaml.v3"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -33,6 +33,11 @@ type JiraConfig struct {
 	SyncInterval  time.Duration // minutes
 	Projects      []string
 	SyncStartDate string
+	Products      []JiraProduct
+}
+type JiraProduct struct {
+	Name        string   `yaml:"name"`
+	MatchesWith []string `yaml:"matches_with"`
 }
 
 type Appconfig struct {
@@ -40,8 +45,12 @@ type Appconfig struct {
 	Version string
 }
 
-func Get() *Config {
+type JiraYamlConfig struct {
+	Projects []string      `yaml:"jira_projects"`
+	Products []JiraProduct `yaml:"jira_products"`
+}
 
+func Get() *Config {
 	_, err := os.Stat("./.env")
 	if err == nil {
 		err := godotenv.Load()
@@ -62,6 +71,7 @@ func Get() *Config {
 			Pass:          getRequiredEnv("JIRA_PASS"),
 			SyncInterval:  getJiraSyncInterval() * time.Minute,
 			Projects:      getJiraProjects(),
+			Products:      getJiraProducts(),
 			SyncStartDate: getRequiredEnv("JIRA_SYNC_START_DATE"),
 		},
 	}
@@ -78,7 +88,7 @@ func getRequiredEnv(env string) string {
 
 func createDbDns() *gorm.DB {
 
-	time.Sleep(15 * time.Second) // wait few seconds to database to be ready!
+	time.Sleep(1 * time.Second) // wait few seconds to database to be ready!
 
 	dbconfig := DatabaseConfig{
 		Name: getRequiredEnv("DATABASE_NAME"),
@@ -101,12 +111,33 @@ func createDbDns() *gorm.DB {
 }
 
 func getJiraProjects() []string {
-	file, err := os.ReadFile("config/jira_projects.txt")
+	jiraYamlConfig, err := getJiraYamlConfig()
 	if err != nil {
-		panic(err.Error())
+		panic(err)
+	}
+	return jiraYamlConfig.Projects
+}
+
+func getJiraProducts() []JiraProduct {
+	jiraYamlConfig, err := getJiraYamlConfig()
+	if err != nil {
+		panic(err)
+	}
+	return jiraYamlConfig.Products
+}
+
+func getJiraYamlConfig() (JiraYamlConfig, error) {
+	data, err := os.ReadFile("config/jira_config.yaml")
+	if err != nil {
+		panic(err)
+	}
+	var jiraYamlConfig JiraYamlConfig
+	err = yaml.Unmarshal(data, &jiraYamlConfig)
+	if err != nil {
+		panic(err)
 	}
 
-	return strings.Split(string(file), "\n")
+	return jiraYamlConfig, nil
 }
 
 func getJiraSyncInterval() time.Duration {

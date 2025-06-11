@@ -19,7 +19,8 @@ func (f *JiraFetcher) GetIssues(project string, page int) (Issues, error) {
 	}
 
 	// monta a query
-	jqlRaw := fmt.Sprintf("project = %s AND updated >= %s", project, f.JiraConfig.SyncStartDate)
+	jqlRaw := fmt.Sprintf("project = %s AND updated >= %s", project, f.JiraConfig.SyncStartDate) // PROD
+	//jqlRaw := fmt.Sprintf("project = %s AND updated >= %s AND key = FPDEE-2970", project, f.JiraConfig.SyncStartDate) // DEV
 	jqlEscaped := url.QueryEscape(jqlRaw)
 
 	query := fmt.Sprintf(

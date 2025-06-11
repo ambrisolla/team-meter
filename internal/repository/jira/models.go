@@ -15,6 +15,7 @@ type Issue struct {
 	UpdatedAt     time.Time `json:"updatedAt" gorm:"autoUpdateTime:false"`
 	Status        string    `json:"status"`
 	ProjectKey    string    `json:"projectKey"`
+	Product       string    `json:"product"`
 }
 
 type IssueChangelog struct {

@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/
 WORKDIR /app/
 
 COPY --from=builder /app/app .
-COPY --from=builder /app/config/jira_projects.txt ./config/
+COPY --from=builder /app/config/jira_config.yaml ./config/
 RUN chmod +x /app/app
 
 CMD ["/app/app"]

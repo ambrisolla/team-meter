@@ -12,6 +12,7 @@ type JiraService struct {
 	Repository jiraRepository.JiraRepository
 	Fetcher    jiraFetcher.JiraFetcher
 	Logger     *zap.Logger
+	Config     config.JiraConfig
 }
 
 func New(c *config.Config, logger *zap.Logger) *JiraService {
@@ -21,5 +22,6 @@ func New(c *config.Config, logger *zap.Logger) *JiraService {
 		Repository: *repository,
 		Fetcher:    *fetcher,
 		Logger:     logger,
+		Config:     c.Jira,
 	}
 }

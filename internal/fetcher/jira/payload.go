@@ -6,10 +6,13 @@ type Issue struct {
 	Key    string `json:"key"`
 	Type   string `json:"type"`
 	Fields struct {
-		Summary string `json:"summary"`
-		Created string `json:"created"`
-		Updated string `json:"updated"`
-		Status  struct {
+		Summary     string `json:"summary"`
+		Created     string `json:"created"`
+		Updated     string `json:"updated"`
+		Description struct {
+			Content []DescriptionContent
+		} `json:"description"`
+		Status struct {
 			StatusCategory struct {
 				Name string `json:"name"`
 			} `json:"statusCategory"`
@@ -51,4 +54,12 @@ type History struct {
 		From      string `json:"fromString"`
 		To        string `json:"toString"`
 	} `json:"items"`
+}
+
+type DescriptionContent struct {
+	Type    string `json:"type"`
+	Content []struct {
+		Type string `json:"type"`
+		Text string `json:"text"`
+	} `json:"content"`
 }

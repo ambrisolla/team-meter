@@ -2,6 +2,9 @@ package jiraService
 
 import (
 	"fmt"
+	"regexp"
+	"strings"
+	"team-meter/config"
 	jiraFetcher "team-meter/internal/fetcher/jira"
 	jiraRepository "team-meter/internal/repository/jira"
 	"time"
@@ -9,7 +12,8 @@ import (
 
 const customTimeLayout = "2006-01-02T15:04:05.000-0700"
 
-func (s *JiraService) SyncIssues(projects []string) {
+func (s *JiraService) SyncIssues(jiraConfig config.JiraConfig) {
+	projects := jiraConfig.Projects
 	for _, project := range projects {
 		s.getIssues(project)
 	}
@@ -56,6 +60,12 @@ func (s *JiraService) saveIssues(issues jiraFetcher.Issues, project string) {
 			panic(err)
 		}
 
+		// Get product
+		product, err := s.getIssueProduct(issue)
+		if err != nil {
+			panic(err)
+		}
+
 		err = s.Repository.SaveIssue(jiraRepository.Issue{
 			ID:            issue.ID,
 			Self:          issue.Self,
@@ -69,6 +79,7 @@ func (s *JiraService) saveIssues(issues jiraFetcher.Issues, project string) {
 			UpdatedAt:     updatedTime,
 			Status:        issue.Fields.Status.StatusCategory.Name,
 			ProjectKey:    project,
+			Product:       product,
 		})
 		if err != nil {
 			msg := fmt.Sprintf("Fail to save issue %s", issue.Key)
@@ -107,4 +118,36 @@ func (s *JiraService) saveIssuesChangelogs(issue jiraFetcher.Issue) error {
 		}
 	}
 	return nil
+}
+
+func (s *JiraService) getIssueProduct(issue jiraFetcher.Issue) (string, error) {
+	isProductRow := false // controle para determinar quando que o produto for encontrado
+	reMatch := regexp.MustCompile("^Produto")
+	product := "uncategorized"
+
+	// first filter
+	for _, d := range issue.Fields.Description.Content {
+		for _, c := range d.Content {
+			if isProductRow {
+				product = strings.ReplaceAll(c.Text, ": ", "")
+				break
+			}
+			if reMatch.MatchString(c.Text) {
+				isProductRow = true
+			}
+		}
+		if isProductRow {
+			break
+		}
+	}
+
+	// second filter
+	for _, p := range s.Config.Products {
+		for _, stringToMatch := range p.MatchesWith {
+			if strings.Contains(strings.ToLower(issue.Fields.Summary), strings.ToLower(stringToMatch)) || strings.Contains(strings.ToLower(product), strings.ToLower(stringToMatch)) {
+				product = p.Name
+			}
+		}
+	}
+	return product, nil
 }

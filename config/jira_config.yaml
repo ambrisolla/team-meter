@@ -1,0 +1,33 @@
+jira_projects:
+  - FPKI
+  - FPDEE
+  - ATL
+jira_products:
+  - name: kaas
+    matches_with:
+      - kafka
+      - kaas
+  - name: mqaas
+    matches_with:
+      - mqaas
+      - mqueue
+      - rabbitmq
+      - sqs
+  - name: oculus
+    matches_with:
+      - oculus
+  - name: rundeck
+    matches_with: 
+      - rundeck
+  - name: atlantis
+    matches_with:
+      - atlantis
+  - name: stonectl
+    matches_with:
+      - stonectl
+  - name: dbaas
+    matches_with:
+      - dbaas
+      - banco de dados
+      - redis
+      - cache
